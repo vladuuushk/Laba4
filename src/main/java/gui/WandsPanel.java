@@ -128,6 +128,35 @@ public class WandsPanel extends JPanel {
         JComboBox<ComponentWand> coreCombo = createComponentCombo(availableCores);
         JTextField priceField = new JTextField();
         
+        // Добавляем проверку ввода для цены
+        priceField.setInputVerifier(new InputVerifier() {
+            @Override
+            public boolean verify(JComponent input) {
+                String text = ((JTextField) input).getText();
+                try {
+                    double price = Double.parseDouble(text);
+                    if (price <= 0) {
+                        JOptionPane.showMessageDialog(
+                            input,
+                            "Цена должна быть положительным числом",
+                            "Ошибка",
+                            JOptionPane.ERROR_MESSAGE
+                        );
+                        return false;
+                    }
+                    return true;
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(
+                        input,
+                        "Введите корректное число для цены",
+                        "Ошибка",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return false;
+                }
+            }
+        });
+        
         JLabel dateLabel = new JLabel(LocalDate.now().toString());
         
         dialog.add(new JLabel("Дата создания:"));
@@ -142,12 +171,28 @@ public class WandsPanel extends JPanel {
         JButton saveButton = new JButton("Сохранить");
         saveButton.addActionListener(e -> {
             try {
+                // Проверяем ввод перед сохранением
+                if (!priceField.getInputVerifier().verify(priceField)) {
+                    return;
+                }
+                
                 ComponentWand selectedWood = (ComponentWand)woodCombo.getSelectedItem();
                 ComponentWand selectedCore = (ComponentWand)coreCombo.getSelectedItem();
+                double price = Double.parseDouble(priceField.getText());
+                
+                if (price <= 0) {
+                    JOptionPane.showMessageDialog(
+                        dialog,
+                        "Цена должна быть положительным числом",
+                        "Ошибка",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                    return;
+                }
                 
                 Wand wand = new Wand(
                     LocalDate.now(),
-                    Double.parseDouble(priceField.getText()),
+                    price,
                     selectedWood.getId(),
                     selectedCore.getId()
                 );

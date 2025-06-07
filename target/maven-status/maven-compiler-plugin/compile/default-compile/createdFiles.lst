@@ -1,5 +1,6 @@
 gui/WandsPanel.class
 gui/SalesPanel$1.class
+gui/WandsPanel$2.class
 model/DeliveryItem.class
 gui/MainFrame.class
 model/Delivery.class
